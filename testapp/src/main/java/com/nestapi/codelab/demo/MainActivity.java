@@ -42,6 +42,7 @@ public class MainActivity extends Activity implements
     private TextView mCurrentCoolTempText;
     private TextView mCurrentHeatTempText;
     private Button mStructureAway;
+    private TextView mCurrentHVACState;
 
     private Listener mUpdateListener;
     private NestAPI mNestApi;
@@ -63,6 +64,7 @@ public class MainActivity extends Activity implements
         mRangeControlContainer = findViewById(R.id.range_control);
         mCurrentCoolTempText = (TextView)findViewById(R.id.current_cool_temp);
         mCurrentHeatTempText = (TextView)findViewById(R.id.current_heat_temp);
+        mCurrentHVACState = (TextView)findViewById(R.id.current_hvac_state);
 
         mStructureAway.setOnClickListener(mStructureAwayClickListener);
         findViewById(R.id.heat).setOnClickListener(mModeClickListener);
@@ -286,6 +288,20 @@ public class MainActivity extends Activity implements
                 singleControlVisibility = View.VISIBLE;
                 rangeControlVisibility = View.GONE;
                 updateSingleControlView();
+                break;
+        }
+
+        Thermostat.HVACState HVACstate = mThermostat.getHVACstate();
+
+        switch(HVACstate) {
+            case HEATING:
+                mCurrentHVACState.setText("Heating");
+                break;
+            case COOLING:
+                mCurrentHVACState.setText("Cooling");
+                break;
+            case OFF:
+                mCurrentHVACState.setText("Off");
                 break;
         }
 

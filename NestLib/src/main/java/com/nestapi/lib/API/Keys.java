@@ -56,6 +56,7 @@ class Keys {
         static final String AWAY_TEMP_LOW_F = "away_temperature_low_f";
         static final String AWAY_TEMP_LOW_C = "away_temperature_low_c";
         static final String HVAC_MODE = "hvac_mode";
+        static final String HVAC_STATE = "hvac_state";
         static final String AMBIENT_TEMP_F = "ambient_temperature_f";
         static final String AMBIENT_TEMP_C = "ambient_temperature_c";
     }

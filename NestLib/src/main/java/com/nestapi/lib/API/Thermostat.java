@@ -41,6 +41,7 @@ public final class Thermostat extends BaseDevice {
     private final long mTargetTemperatureLowF;
     private final double mTargetTemperatureLowC;
     private final HVACMode mHVACmode;
+    private final HVACState mHVACstate;
 
     private Thermostat(Builder builder) {
         super(builder);
@@ -65,6 +66,7 @@ public final class Thermostat extends BaseDevice {
         mTargetTemperatureLowF = builder.mTargetTemperatureLowF;
         mTargetTemperatureLowC = builder.mTargetTemperatureLowC;
         mHVACmode = builder.mHVACmode;
+        mHVACstate = builder.mHVACstate;
     }
 
     private Thermostat(Parcel in) {
@@ -91,6 +93,7 @@ public final class Thermostat extends BaseDevice {
         mTargetTemperatureLowF = in.readLong();
         mTargetTemperatureLowC = in.readDouble();
         mHVACmode = (HVACMode) in.readSerializable();
+        mHVACstate = (HVACState) in.readSerializable();
     }
 
     public static class Builder extends BaseDeviceBuilder<Thermostat> {
@@ -113,6 +116,7 @@ public final class Thermostat extends BaseDevice {
         private long mAwayTemperatureLowF;
         private double mAwayTemperatureLowC;
         private HVACMode mHVACmode;
+        private HVACState mHVACstate;
         private long mAmbientTemperatureF;
         private double mAmbientTemperatureC;
 
@@ -139,6 +143,7 @@ public final class Thermostat extends BaseDevice {
             setTargetTemperatureLowF(json.optLong(Keys.THERMOSTAT.TARGET_TEMP_LOW_F));
             setTargetTemperatureLowC(json.optDouble(Keys.THERMOSTAT.TARGET_TEMP_LOW_C));
             setHVACmode(json.optString(Keys.THERMOSTAT.HVAC_MODE));
+            setHVACstate(json.optString(Keys.THERMOSTAT.HVAC_STATE));
             return build();
         }
 
@@ -242,6 +247,16 @@ public final class Thermostat extends BaseDevice {
             return this;
         }
 
+        public Builder setHVACstate(String mode) {
+            mHVACstate = HVACState.from(mode);
+            return this;
+        }
+
+        public Builder setHVACmode(HVACState HVACstate) {
+            mHVACstate = HVACstate;
+            return this;
+        }
+
         public Builder setAmbientTemperatureF(long ambientTemperatureF) {
             mAmbientTemperatureF = ambientTemperatureF;
             return this;
@@ -279,6 +294,7 @@ public final class Thermostat extends BaseDevice {
         json.put(Keys.THERMOSTAT.AWAY_TEMP_LOW_F, mAwayTemperatureLowF);
         json.put(Keys.THERMOSTAT.AWAY_TEMP_LOW_C, mAwayTemperatureLowC);
         json.put(Keys.THERMOSTAT.HVAC_MODE, mHVACmode.getKey());
+        json.put(Keys.THERMOSTAT.HVAC_STATE, mHVACstate.getKey());
         json.put(Keys.THERMOSTAT.AMBIENT_TEMP_F, mAmbientTemperatureF);
         json.put(Keys.THERMOSTAT.AMBIENT_TEMP_C, mAmbientTemperatureC);
     }
@@ -464,6 +480,14 @@ public final class Thermostat extends BaseDevice {
         return mHVACmode;
     }
 
+    /**
+     * Returns the current operating mode of the thermostat.
+     * @see com.nestapi.lib.API.Thermostat.HVACState
+     */
+    public HVACState getHVACstate() {
+        return mHVACstate;
+    }
+
     @Override public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         writeBoolean(dest, mCanCool);
@@ -500,6 +524,31 @@ public final class Thermostat extends BaseDevice {
             return new Thermostat[size];
         }
     };
+
+    public static enum HVACState {
+        HEATING("heating"),
+        COOLING("cooling"),
+        OFF("off");
+
+        private final String mKey;
+
+        HVACState(String key) {
+            mKey = key;
+        }
+
+        public String getKey() {
+            return mKey;
+        }
+
+        public static HVACState from(String key) {
+            for (HVACState mode : values()) {
+                if (mode.mKey.equalsIgnoreCase(key)) {
+                    return mode;
+                }
+            }
+            return OFF;
+        }
+    }
 
     public static enum HVACMode {
         HEAT("heat"),
